@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart College Assistant</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#eef2f6;--panel:#fff;--ink:#14213d;--mute:#5b6678;--line:#d7dee8;--side:#14213d;--sideink:#dfe7f5;--acc:#0f8b8d;--accink:#fff;--mark:#ffc857;--bad:#c0392b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1626;--panel:#16203a;--ink:#e8eefb;--mute:#9aa8c2;--line:#2a3757;--side:#0a111f;--acc:#3cc4c6;--accink:#06222a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1626;--panel:#16203a;--ink:#e8eefb;--mute:#9aa8c2;--line:#2a3757;--side:#0a111f;--acc:#3cc4c6;--accink:#06222a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 "DM Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","DM Sans",sans-serif;margin:0;line-height:1.15}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{background:var(--side);color:var(--sideink);padding:22px 14px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{font:700 20px "Bricolage Grotesque",sans-serif;padding:0 10px 18px;color:#fff}
+.brand span{background:var(--mark);color:#14213d;padding:0 6px;border-radius:4px}
+nav a{display:block;padding:9px 12px;border-radius:8px;color:inherit;text-decoration:none;margin-bottom:2px;font-weight:500}
+nav a:hover{background:rgba(255,255,255,.08)}
+nav a.on{background:var(--mark);color:#14213d}
+.wrap{min-width:0}
+.top{display:flex;gap:12px;align-items:center;padding:14px 28px;border-bottom:1px solid var(--line);background:var(--panel)}
+.top input{flex:1;max-width:520px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+.top button,.btn{border:0;background:var(--acc);color:var(--accink);padding:10px 16px;border-radius:10px;font:500 14px "DM Sans",sans-serif;cursor:pointer}
+.ghost{background:transparent!important;color:var(--ink)!important;border:1px solid var(--line)!important}
+:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+.app[hidden]{display:none}
+.ico{width:18px;height:18px;vertical-align:-4px;margin-right:9px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.top .ico,.lside .ico{margin-right:0}
+.top{justify-content:space-between}
+.top .who{display:flex;align-items:center;gap:10px}
+.login{position:fixed;inset:0;z-index:50;background:var(--bg);display:grid;place-items:center;padding:20px;overflow:auto}
+.login[hidden]{display:none}
+.lbox{width:min(880px,100%);display:grid;grid-template-columns:1fr 1fr;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.lside{background:var(--side);color:#fff;padding:36px;display:flex;flex-direction:column;justify-content:space-between;gap:24px}
+.lside ul{list-style:none;padding:0;margin:0;display:grid;gap:14px;color:var(--sideink)}
+.lside li{display:flex;gap:12px;align-items:center}
+.lform{padding:36px;display:grid;gap:14px;align-content:center}
+.lform label{display:grid;gap:5px;font-weight:500}
+.lform input{padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+.err{color:var(--bad);min-height:20px;margin:0}
+.ok{color:var(--acc)}
+.fm{display:grid;gap:14px}
+.fm[hidden]{display:none}
+.lform .tabs{margin:0}
+.lk{background:none;border:0;color:var(--acc);font:inherit;cursor:pointer;padding:0;text-align:left;text-decoration:underline}
+@media (max-width:760px){.lbox{grid-template-columns:1fr}.lside{padding:24px}.lform{padding:24px}.top .who span{display:none}}
+main{padding:28px;max-width:1100px}
+h2{font-size:30px;margin-bottom:4px}
+.sub{color:var(--mute);margin:0 0 22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h3{font-size:18px;margin-bottom:10px}
+.row{display:flex;gap:12px;padding:9px 0;border-top:1px solid var(--line);align-items:baseline}
+.row:first-of-type{border-top:0}
+.row b{min-width:88px;font-weight:700}
+.row small,.mute{color:var(--mute)}
+.tag{display:inline-block;font-size:12px;padding:1px 9px;border-radius:99px;border:1px solid var(--line);color:var(--mute);margin-left:6px}
+.tag.hi{background:var(--mark);color:#14213d;border-color:var(--mark)}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.stat{flex:1;min-width:130px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat strong{display:block;font:700 28px "Bricolage Grotesque",sans-serif}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--acc)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chat{display:flex;flex-direction:column;height:min(620px,calc(100vh - 230px));min-height:420px}
+.msgs{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px 12px}
+.m{max-width:82%;padding:10px 14px;border-radius:14px;white-space:pre-wrap}
+.m.u{align-self:flex-end;background:var(--acc);color:var(--accink)}
+.m.b{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chips button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.ask{display:flex;gap:8px}
+.ask input{flex:1;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+.scroll{overflow-x:auto}
+.gpt{display:flex;flex-direction:column;height:calc(100vh - 130px);min-height:440px;max-width:780px;margin:0 auto}
+.gh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.gh h2{font-size:20px;margin:0}
+.gscroll{flex:1;overflow:auto;padding:8px 4px 16px;display:flex;flex-direction:column;gap:22px}
+.mu{display:flex;justify-content:flex-end}
+.ub{max-width:80%;background:var(--line);padding:10px 16px;border-radius:20px;white-space:pre-wrap;overflow-wrap:anywhere}
+.ma{display:flex;gap:12px;align-items:flex-start}
+.av{flex:none;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--bg);font:700 12px "DM Sans",sans-serif;display:grid;place-items:center}
+.ab{flex:1;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
+.cp{margin-top:6px;background:none;border:0;color:var(--mute);font:inherit;font-size:13px;cursor:pointer;padding:2px 0}
+.welcome{margin:auto;text-align:center;width:100%}
+.welcome h2{font-size:28px;margin-bottom:22px}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;text-align:left}
+.sg button{display:grid;gap:4px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);font:inherit;cursor:pointer}
+.sg small{color:var(--mute)}
+.comp{display:flex;align-items:flex-end;gap:8px;border:1px solid var(--line);background:var(--panel);border-radius:26px;padding:8px 8px 8px 18px}
+.comp:focus-within{outline:3px solid var(--mark)}
+.comp textarea{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--ink);font:inherit;max-height:180px;padding:8px 0;line-height:1.5}
+.send{flex:none;width:38px;height:38px;border-radius:50%;border:0;background:var(--ink);color:var(--bg);display:grid;place-items:center;cursor:pointer}
+.send .ico{margin:0}
+.fine{text-align:center;color:var(--mute);font-size:12px;margin:8px 0 0}
+.dots i{display:inline-block;width:7px;height:7px;margin-right:4px;border-radius:50%;background:var(--mute);animation:bl 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (max-width:760px){.gpt{height:calc(100vh - 230px)}.ub{max-width:90%}}
+table{border-collapse:collapse;width:100%;min-width:480px}
+td,th{text-align:left;padding:10px 12px;border-top:1px solid var(--line)}
+th{color:var(--mute);font-weight:500;border-top:0}
+@media (max-width:760px){
+.app{grid-template-columns:1fr}
+aside{position:static;height:auto;padding:12px}
+.brand{padding-bottom:8px}
+nav{display:flex;gap:4px;overflow-x:auto}
+nav a{white-space:nowrap;margin:0}
+main{padding:18px}.top{padding:12px 18px}
+.m{max-width:92%}
+}
+@media (prefers-reduced-motion:no-preference){.card{animation:in .35s ease both}@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+<div class="login" id="login">
+<div class="lbox">
+<div class="lside">
+<div class="brand" style="padding:0">Greenfield <span>Assist</span></div>
+<ul>
+<li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Your subjects and syllabus</li>
+<li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 004 0"/></svg>Notices and exam dates</li>
+<li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 01-11.5 7.2L4 20l1-4.5A8 8 0 1121 12z"/></svg>A chatbot for college questions</li>
+</ul>
+<small>Demo build: sign-in runs in your browser only.</small>
+</div>
+<div class="lform">
+<div class="tabs" id="ltabs"><button type="button" data-tab="in" class="on">Sign in</button><button type="button" data-tab="reg">Create account</button></div>
+<form class="fm" id="lform">
+<h2>Student sign in</h2>
+<p class="mute" style="margin:0">Use your roll number and password.</p>
+<label>Roll number<input id="lroll" autocomplete="username" required></label>
+<label>Password<input id="lpw" type="password" autocomplete="current-password" required></label>
+<p class="err" id="lerr" role="alert"></p>
+<button class="btn" type="submit">Sign in</button>
+<button type="button" class="lk" data-tab="reset">Forgot password?</button>
+</form>
+<form class="fm" id="rform" hidden>
+<h2>Create your account</h2>
+<p class="mute" style="margin:0">New here? Register once, then sign in any time.</p>
+<label>Full name<input id="rname" autocomplete="name" required></label>
+<label>Roll number<input id="rroll" required></label>
+<label>Email<input id="rmail" type="email" autocomplete="email" required></label>
+<label>Password<input id="rpw" type="password" autocomplete="new-password" required></label>
+<label>Confirm password<input id="rpw2" type="password" autocomplete="new-password" required></label>
+<p class="err" id="rerr" role="alert"></p>
+<button class="btn" type="submit">Create account</button>
+<button type="button" class="lk" data-tab="in">I already have an account</button>
+</form>
+<form class="fm" id="fform" hidden>
+<h2>Reset your password</h2>
+<p class="mute" style="margin:0">Enter your roll number and the email you registered with, then choose a new password.</p>
+<label>Roll number<input id="froll" required></label>
+<label>Registered email<input id="fmail" type="email" required></label>
+<label>New password<input id="fpw" type="password" autocomplete="new-password" required></label>
+<label>Confirm new password<input id="fpw2" type="password" autocomplete="new-password" required></label>
+<p class="err" id="ferr" role="alert"></p>
+<button class="btn" type="submit">Change password</button>
+<button type="button" class="lk" data-tab="in">Back to sign in</button>
+</form>
+</div>
+</div>
+</div>
+<div class="app" id="app" hidden>
+<aside>
+<div class="brand">Greenfield <span>Assist</span></div>
+<nav id="nav"></nav>
+</aside>
+<div class="wrap">
+<div class="top">
+<input id="q" type="search" placeholder="Search notices, faculty, subjects, dates…" aria-label="Search">
+<div class="who"><span class="mute" id="who"></span><button class="ghost btn" id="theme" aria-label="Toggle dark mode"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg></button><button class="ghost btn" id="logout" aria-label="Sign out"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H5v16h4"/><path d="M16 8l4 4-4 4M20 12H9"/></svg></button></div>
+</div>
+<main id="main"></main>
+</div>
+</div>
+<script>
+const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const STUDENT={name:"Aarav Sharma",roll:"CS23-042",course:"B.Tech Computer Science",sem:"Semester 5",att:82,cgpa:8.4};
+const FAC=[
+{id:"f1",name:"Dr. Meera Iyer",role:"Professor, HOD Computer Science",email:"meera.iyer@greenfield.edu",room:"CS Block, 301",hours:"Mon & Wed, 2–4 PM",subs:["BCS501"]},
+{id:"f2",name:"Prof. Rahul Verma",role:"Associate Professor",email:"rahul.verma@greenfield.edu",room:"CS Block, 214",hours:"Tue & Thu, 11 AM–1 PM",subs:["BCS502"]},
+{id:"f3",name:"Dr. Sana Khan",role:"Assistant Professor",email:"sana.khan@greenfield.edu",room:"CS Block, 118",hours:"Fri, 10 AM–12 PM",subs:["BCS503"]},
+{id:"f4",name:"Mr. Vikram Rao",role:"Lecturer",email:"vikram.rao@greenfield.edu",room:"Lab Wing, 02",hours:"Mon–Thu, 4–5 PM",subs:["DE-I"]},
+{id:"f5",name:"Dr. Anita Joshi",role:"Professor",email:"anita.joshi@greenfield.edu",room:"Main Block, 120",hours:"Wed, 10 AM–12 PM",subs:["DE-II"]}];
+const SUB=[
+{c:"BCS501",n:"Database Management System",f:"f1",u:["Introduction: DBMS architecture, data models and ER modelling","Relational model, relational algebra and SQL","Database design: functional dependencies and normalisation","Transaction processing: ACID properties and recovery","Concurrency control: locking, timestamps and deadlocks"]},
+{c:"BCS502",n:"Web Technology",f:"f2",u:["Web basics, HTML and CSS","JavaScript and the DOM","Server-side programming","Databases and data exchange on the web (XML, JSON)","Web applications and deployment"]},
+{c:"BCS503",n:"Design and Analysis of Algorithms",f:"f3",u:["Introduction: algorithm analysis, recurrences and sorting","Advanced data structures","Divide and conquer, greedy methods","Dynamic programming, backtracking, branch and bound","Graph algorithms, string matching and NP-completeness"]},
+{c:"DE-I",n:"Departmental Elective I",f:"f4",u:["Content depends on the elective you chose"]},
+{c:"DE-II",n:"Departmental Elective II",f:"f5",u:["Content depends on the elective you chose"]}];
+const NOT=[
+{d:"2026-11-20",t:"End-semester exam timetable released",b:"The theory exam timetable for Semester 5 is on the exam portal. Report 20 minutes before each paper with your ID card.",tag:"Exams",hi:1},
+{d:"2026-11-19",t:"Fee payment last date: 28 November",b:"Pay semester fees online or at the accounts office. A late fine of ₹50 per day applies after the deadline.",tag:"Fees",hi:1},
+{d:"2026-11-17",t:"Library extends hours during exams",b:"From 1 December the library is open 8 AM to 10 PM on all days, including Sundays.",tag:"Library"},
+{d:"2026-11-14",t:"Hackathon registrations open",b:"The annual 24-hour hackathon is on 6–7 December. Teams of 2–4 can register at the Student Activity Centre.",tag:"Events"},
+{d:"2026-11-10",t:"Project report submission",b:"Final-year and mini-project reports are due to your guide by 3 December. Submit a soft copy and one hard copy.",tag:"Academics"}];
+const CAL=[
+{d:"2026-11-28",t:"Last date to pay semester fees"},
+{d:"2026-12-03",t:"Mini project report submission"},
+{d:"2026-12-06",t:"Hackathon (two days)"},
+{d:"2026-12-10",t:"Practical exams begin"},
+{d:"2026-12-16",t:"End-semester theory exams begin"},
+{d:"2026-12-24",t:"Last day of exams"},
+{d:"2026-12-25",t:"Winter break begins"},
+{d:"2027-01-12",t:"Semester 6 begins"}];
+const FAQ=[
+{k:"attendance minimum percentage shortage eligible",a:"You need at least 75% attendance in each subject to sit the end-semester exams. Students between 65% and 75% can apply for condonation with a medical or valid reason, with a fee."},
+{k:"fee fees payment pay late fine",a:"Semester fees can be paid online or at the accounts office (10 AM–4 PM, Mon–Fri). The last date is 28 November; a late fine of ₹50 per day applies afterwards."},
+{k:"library books borrow issue return fine timing hours",a:"The library lets you borrow 3 books for 14 days. Late returns cost ₹2 per day per book. Hours are 9 AM–6 PM, extended to 8 AM–10 PM from 1 December."},
+{k:"hostel accommodation room mess warden",a:"Hostel applications are made through the student portal before each semester. Contact the warden’s office in the Hostel Block for room changes and mess queries."},
+{k:"id card identity lost duplicate",a:"For a lost ID card, file a request at the admin office with a photo and ₹100. The duplicate is issued within 3 working days."},
+{k:"exam result marks revaluation reevaluation grade cgpa",a:"Results appear on the exam portal about 3 weeks after the last paper. You can apply for revaluation within 7 days of the result with a fee of ₹500 per paper."},
+{k:"scholarship financial aid merit",a:"Merit and need-based scholarships are open every August. Apply at the Student Affairs office with income and mark certificates."},
+{k:"placement internship training company recruitment",a:"The Training and Placement Cell runs pre-placement talks from September. Register your resume on the placement portal and attend the weekly aptitude sessions."},
+{k:"wifi internet lab computer password",a:"Campus Wi-Fi uses your roll number as the username. For password resets, visit the IT helpdesk in the Lab Wing, Room 01."},
+{k:"contact office admin reception phone email",a:"The administrative office is open 10 AM–4 PM, Monday to Friday, in the Main Block. Email: office@greenfield.edu."},
+{k:"certificate bonafide transcript document",a:"Apply for bonafide certificates and transcripts at the admin office. Bonafide takes 1 working day; transcripts take 5 working days."}];
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=d=>new Date(d+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+const today=new Date(); today.setHours(0,0,0,0);
+const left=d=>Math.round((new Date(d+"T00:00:00")-today)/864e5);
+const subj=c=>SUB.find(s=>s.c===c);
+const fac=id=>FAC.find(f=>f.id===id);
+const label=c=>subj(c)?subj(c).n:c;
+const facOf=c=>subj(c)?fac(subj(c).f).name:"";
+const upcoming=()=>CAL.filter(e=>left(e.d)>=0).slice(0,4);
+const ago=n=>n===0?"today":n===1?"tomorrow":"in "+n+" days";
+
+const IC={home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',notices:'<path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 004 0"/>',faculty:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.5.6 3.5 2.5 3.5 6"/>',subjects:'<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/><path d="M4 19V5"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',assistant:'<path d="M21 12a8 8 0 01-11.5 7.2L4 20l1-4.5A8 8 0 1121 12z"/>'};
+const ico=k=>`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg>`;
+const VIEWS=[["home","Dashboard"],["notices","Notices"],["faculty","Faculty"],["subjects","Subjects"],["calendar","Academic dates"],["assistant","Ask the assistant"]];
+let chatLog=[];
+
+function noticeCard(n){return `<div class="card"><h3>${esc(n.t)}</h3><p style="margin:0 0 8px">${esc(n.b)}</p><small class="mute">${fmt(n.d)}</small><span class="tag${n.hi?" hi":""}">${esc(n.tag)}</span></div>`}
+function dateRows(list){return list.map(e=>`<div class="row"><b>${fmt(e.d)}</b><div>${esc(e.t)}<br><small>${left(e.d)>=0?ago(left(e.d)):"Past"}</small></div></div>`).join("")}
+
+const R={
+home(){
+return `<h2>Hello, ${esc(STUDENT.name.split(" ")[0])}</h2><p class="sub">${esc(STUDENT.course)} · ${esc(STUDENT.sem)} · Roll ${esc(STUDENT.roll)}</p>
+<div class="stats"><div class="stat"><small class="mute">Attendance</small><strong>${STUDENT.att}%</strong><div class="bar"><i style="width:${STUDENT.att}%"></i></div></div>
+<div class="stat"><small class="mute">CGPA</small><strong>${STUDENT.cgpa}</strong></div>
+<div class="stat"><small class="mute">Subjects</small><strong>${SUB.length}</strong></div>
+<div class="stat"><small class="mute">Next deadline</small><strong>${upcoming()[0]?ago(left(upcoming()[0].d)):"–"}</strong></div></div>
+<div class="grid">
+<div class="card"><h3>This semester</h3>${SUB.map(s=>`<div class="row"><b>${s.c}</b><div>${esc(s.n)}<br><small>${esc(fac(s.f).name)}</small></div></div>`).join("")}</div>
+<div class="card"><h3>Coming up</h3>${dateRows(upcoming())}</div>
+<div class="card"><h3>Latest notices</h3>${NOT.slice(0,3).map(n=>`<div class="row"><b>${fmt(n.d).slice(0,6)}</b><div>${esc(n.t)}</div></div>`).join("")}<p style="margin:10px 0 0"><a href="#notices">All notices</a></p></div>
+<div class="card"><h3>Ask the assistant</h3><p class="mute" style="margin-top:0">Try “When do exams start?” or “Who teaches DBMS?”</p><a class="btn" href="#assistant" style="text-decoration:none;display:inline-block">Open chat</a></div></div>`},
+notices(){return `<h2>Notices and announcements</h2><p class="sub">Newest first</p><div class="grid">${NOT.map(noticeCard).join("")}</div>`},
+faculty(){return `<h2>Faculty</h2><p class="sub">Office hours and contact details</p><div class="grid">${FAC.map(f=>`<div class="card"><h3>${esc(f.name)}</h3><p class="mute" style="margin:0 0 8px">${esc(f.role)}</p><div class="row"><b>Teaches</b><div>${f.subs.map(s=>esc(label(s))).join(", ")}</div></div><div class="row"><b>Office</b><div>${esc(f.room)}</div></div><div class="row"><b>Hours</b><div>${esc(f.hours)}</div></div><div class="row"><b>Email</b><div>${esc(f.email)}</div></div></div>`).join("")}</div>`},
+subjects(){return `<h2>Subjects</h2><p class="sub">B.Tech CSE, Semester V (AKTU 2024-25 syllabus)</p><div class="grid">${SUB.map(s=>`<div class="card"><h3>${esc(s.n)}</h3><p class="mute" style="margin:0 0 8px">${s.c} · ${esc(fac(s.f).name)}</p><ol style="margin:0;padding-left:20px">${s.u.map(u=>`<li>${esc(u)}</li>`).join("")}</ol></div>`).join("")}</div><p class="mute" style="margin-top:16px">Unit outlines are summarised. Check the official AKTU syllabus for exact content.</p>`},
+calendar(){return `<h2>Important academic dates</h2><p class="sub">Exams, deadlines and breaks</p><div class="card">${dateRows(CAL)}</div>`},
+assistant(){return `<div class="gpt"><div class="gh"><h2>College assistant</h2><button class="ghost btn" id="newchat" type="button">New chat</button></div><div class="gscroll" id="msgs"></div><form class="comp" id="askf"><textarea id="ain" rows="1" placeholder="Ask me anything" aria-label="Your message"></textarea><button class="send" type="submit" aria-label="Send">${SENDI}</button></form><p class="fine">The assistant can make mistakes. Check important college details with the admin office.</p></div>`},
+search(q){
+const t=q.toLowerCase(),has=s=>s.toLowerCase().includes(t);
+const n=NOT.filter(x=>has(x.t+x.b+x.tag)),f=FAC.filter(x=>has(x.name+x.role+x.subs.map(label).join(" "))),s=SUB.filter(x=>has(x.n+x.c+x.u.join(" "))),c=CAL.filter(x=>has(x.t)),a=FAQ.filter(x=>has(x.k+x.a));
+const sec=(h,items)=>items.length?`<div class="card" style="margin-bottom:16px"><h3>${h}</h3>${items.join("")}</div>`:"";
+const out=sec("Notices",n.map(x=>`<div class="row"><b>${fmt(x.d).slice(0,6)}</b><div>${esc(x.t)}</div></div>`))+sec("Faculty",f.map(x=>`<div class="row"><b>${esc(x.name)}</b><div>${esc(x.role)}<br><small>${esc(x.room)}</small></div></div>`))+sec("Subjects",s.map(x=>`<div class="row"><b>${x.c}</b><div>${esc(x.n)}<br><small>${esc(fac(x.f).name)}</small></div></div>`))+sec("Dates",c.map(x=>`<div class="row"><b>${fmt(x.d)}</b><div>${esc(x.t)}</div></div>`))+sec("FAQ",a.map(x=>`<div class="row"><div>${esc(x.a)}</div></div>`));
+return `<h2>Results for “${esc(q)}”</h2><p class="sub">&nbsp;</p>${out||"<div class='card'>Nothing matched. Try a subject, teacher or topic, or <a href='#assistant'>ask the assistant</a>.</div>"}`}
+};
+
+const STOP=new Set("the a an is are of to for in on do i my me how what when where who can does it and or at be this that tell about".split(" "));
+function toks(s){return s.toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(w=>w&&!STOP.has(w))}
+function answer(q){
+const t=q.toLowerCase(),w=toks(q);
+const alias={dbms:"BCS501",web:"BCS502",daa:"BCS503"};
+let sub=SUB.find(s=>t.includes(s.n.toLowerCase())||t.includes(s.c.toLowerCase()))||SUB.find(s=>w.some(x=>alias[x]===s.c));
+const fm=FAC.find(f=>t.includes(f.name.toLowerCase().replace(/^(dr|prof|mr)\.\s*/,"").split(" ")[0])&&t.length>3&&f.name.toLowerCase().split(" ").slice(1).some(p=>t.includes(p)));
+if(fm)return fm.name+" — "+fm.role+".\nTeaches: "+fm.subs.map(label).join(", ")+".\nOffice: "+fm.room+". Hours: "+fm.hours+".\nEmail: "+fm.email;
+if(/who|teach|faculty|professor|sir|madam/.test(t)&&sub){const f=fac(sub.f);return f.name+" teaches "+sub.n+". Office: "+f.room+", hours: "+f.hours+"."}
+if(sub&&!/exam|date/.test(t))return sub.n+" ("+sub.c+"), taught by "+facOf(sub.c)+".\nUnits: "+sub.u.join("; ")+".";
+if(/timetable|schedule/.test(t))return "This app doesn’t include a timetable. Ask me about subjects, exam dates, fees or faculty.";
+if(/subject|syllabus|paper|course/.test(t))return "Semester 5 subjects:\n"+SUB.map(s=>"• "+s.n+" ("+s.c+")").join("\n");
+if(/exam|deadline|date|holiday|break|semester begin|reopen|when/.test(t)){
+let m=CAL.filter(e=>w.some(x=>x.length>3&&e.t.toLowerCase().includes(x.slice(0,5))));
+if(!m.length)m=upcoming();
+return m.map(e=>fmt(e.d)+" — "+e.t+(left(e.d)>=0?" ("+ago(left(e.d))+")":"")).join("\n")}
+if(/notice|announce|news|latest|event/.test(t))return NOT.slice(0,3).map(n=>"• "+n.t+" ("+fmt(n.d)+")").join("\n");
+let best=null,bs=0;
+FAQ.forEach(f=>{const kw=f.k.split(" ");let s=0;w.forEach(x=>{if(kw.some(k=>k===x||(x.length>3&&(k.startsWith(x)||x.startsWith(k)))))s++;});if(s>bs){bs=s;best=f}});
+if(best)return best.a;
+return "I couldn’t find that in the college information. Try asking about subjects, exam dates, fees, attendance, library, hostel or a faculty member, or contact the admin office (office@greenfield.edu)."}
+
+const SENDI='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',STOPI='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/></svg>';
+const SUGG=[["Explain normalisation with an example","Database Management System"],["Show me a simple REST API in Node.js","Web Technology"],["Help me prepare for DAA exams","Study plan"],["When do exams start?","College info"]];
+const fmtT=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+function drawChat(){
+const m=$("#msgs");if(!m)return;
+if(!chatLog.length)m.innerHTML=`<div class="welcome"><h2>Hi ${esc(STUDENT.name.split(" ")[0])}, what can I help with?</h2><div class="sg">${SUGG.map(x=>`<button type="button" data-ask="${esc(x[0])}"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></button>`).join("")}</div></div>`;
+else m.innerHTML=chatLog.map((x,i)=>x.r==="u"?`<div class="mu"><div class="ub">${fmtT(x.t)}</div></div>`:`<div class="ma"><div class="av">AI</div><div class="ab">${x.t==="Thinking…"?'<span class="dots"><i></i><i></i><i></i></span>':fmtT(x.t)}${x.t!=="Thinking…"&&!x.err?`<div><button class="cp" data-copy="${i}">Copy</button></div>`:""}</div></div>`).join("");
+m.scrollTop=m.scrollHeight;
+const b=$(".send");if(b){b.innerHTML=busy?STOPI:SENDI;b.setAttribute("aria-label",busy?"Stop":"Send")}}
+let sampleFn=null,busy=false,noteShown=false,ctl=null;
+try{window.claude&&window.claude.use("sample").then(f=>{sampleFn=f}).catch(()=>{})}catch(e){}
+function rules(){
+const data={today:new Date().toDateString(),student:STUDENT,subjects:SUB.map(s=>({code:s.c,name:s.n,teacher:fac(s.f).name,units:s.u})),faculty:FAC.map(f=>({name:f.name,role:f.role,email:f.email,office:f.room,hours:f.hours,teaches:f.subs.map(label)})),notices:NOT.map(n=>({date:n.d,title:n.t,details:n.b})),important_dates:CAL,faq:FAQ.map(f=>f.a)};
+return "You are the Smart College Assistant for Greenfield College, helping a B.Tech Computer Science student in Semester 5 (AKTU curriculum). Answer ANY question the student asks, like a general-purpose AI assistant: studies, coding, career advice, general knowledge, writing help and more, with clear and accurate answers. For college-specific questions (subjects, faculty, notices, dates, fees, library, rules) rely on the college information below and never invent college facts that are not listed; if something is missing, say so and suggest the admin office (office@greenfield.edu). This app has no timetable feature. Reply in the language the student writes in. Write plain text: no markdown headings or tables; use short hyphen lists when needed.\n\nCOLLEGE INFORMATION (JSON):\n"+JSON.stringify(data)}
+async function send(q){
+q=q.trim();if(!q||busy)return;
+chatLog.push({r:"u",t:q});
+if(!sampleFn){chatLog.push({r:"b",t:answer(q)});drawChat();return}
+busy=true;chatLog.push({r:"b",t:"Thinking…"});const bi=chatLog.length-1;drawChat();
+let hist=chatLog.slice(0,bi-1).filter(x=>!x.err).slice(-8).map(x=>({role:x.r==="u"?"user":"assistant",content:x.t}));
+while(hist.length&&hist[0].role!=="user")hist.shift();
+const turns=[...hist,{role:"user",content:q}];
+turns[0]={role:"user",content:rules()+"\n\n---\nStudent message:\n"+turns[0].content};
+try{
+const r=await sampleFn(turns,{cache:false,signal:(ctl=new AbortController()).signal,onText:({text})=>{chatLog[bi].t=text;drawChat()}});
+chatLog[bi].t=r.text;
+}catch(e){
+const c=e&&e.code;
+if(c==="cancelled"){chatLog[bi].t=e.text||"Stopped."}
+else if(["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"].includes(c)){sampleFn=null;chatLog[bi]={r:"b",t:(noteShown?"":"AI answers are turned off, so I’m using the built-in college information.\n\n")+answer(q)};noteShown=true}
+else if(e&&e.text)chatLog[bi].t=e.text+"\n\n(Interrupted. Send your question again to retry.)";
+else chatLog[bi]={r:"b",err:1,t:c==="rate_limited"?"Too many questions right now. Wait a moment and try again.":"I couldn’t get an answer just now. Please try again."};
+}
+busy=false;drawChat()}
+
+function render(){
+const h=location.hash.slice(1)||"home";
+const view=R[h]&&h!=="search"?h:"home";
+$("#nav").innerHTML=VIEWS.map(v=>`<a href="#${v[0]}" class="${v[0]===view?"on":""}">${ico(v[0])}${v[1]}</a>`).join("");
+const q=$("#q").value.trim();
+$("#main").innerHTML=q.length>1?R.search(q):R[view]();
+if(view==="assistant"&&!(q.length>1))drawChat();
+}
+window.addEventListener("hashchange",()=>{$("#q").value="";render()});
+$("#q").addEventListener("input",render);
+document.addEventListener("click",e=>{
+const a=e.target.closest("[data-ask]");if(a)send(a.dataset.ask);
+const cp=e.target.closest("[data-copy]");if(cp){try{navigator.clipboard.writeText(chatLog[+cp.dataset.copy].t);cp.textContent="Copied";setTimeout(()=>{cp.textContent="Copy"},1500)}catch(_){}}
+if(e.target.closest("#newchat")){if(busy&&ctl)ctl.abort();chatLog=[];drawChat()}
+});
+document.addEventListener("submit",e=>{if(e.target.id==="askf"){e.preventDefault();if(busy){ctl&&ctl.abort();return}const i=$("#ain");const v=i.value;i.value="";i.style.height="auto";send(v)}});
+document.addEventListener("keydown",e=>{if(e.target.id==="ain"&&e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("#askf").requestSubmit()}});
+document.addEventListener("input",e=>{if(e.target.id==="ain"){e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,180)+"px"}});
+$("#theme").addEventListener("click",()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dark?"light":"dark"});
+let memU={};
+const getU=()=>{try{return JSON.parse(localStorage.getItem("sca_users")||"null")||memU}catch(e){return memU}};
+const setU=u=>{memU=u;try{localStorage.setItem("sca_users",JSON.stringify(u))}catch(e){}};
+const hash=async s=>{try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("sca:"+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return btoa(unescape(encodeURIComponent(s)))}};
+const bad=(id,t)=>{$(id).textContent=t;$(id).className="err"};
+function enter(roll){const u=getU()[roll];STUDENT.name=u.name;STUDENT.roll=roll;chatLog=[];$("#login").hidden=true;$("#app").hidden=false;$("#who").textContent=u.name;try{sessionStorage.setItem("sca",roll)}catch(e){}render()}
+function leave(){try{sessionStorage.removeItem("sca")}catch(e){}$("#app").hidden=true;$("#login").hidden=false;$("#lpw").value="";$("#lerr").textContent=""}
+function showTab(m,msg){const f={in:"#lform",reg:"#rform",reset:"#fform"};for(const k in f)$(f[k]).hidden=k!==m;document.querySelectorAll("#ltabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===m));["#lerr","#rerr","#ferr"].forEach(s=>{$(s).textContent="";$(s).className="err"});if(msg){$("#lerr").textContent=msg;$("#lerr").className="err ok"}}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-tab]");if(t)showTab(t.dataset.tab)});
+$("#lform").addEventListener("submit",async e=>{e.preventDefault();const r=$("#lroll").value.trim().toUpperCase(),u=getU()[r];if(u&&u.pw===await hash($("#lpw").value))enter(r);else bad("#lerr","Roll number or password is incorrect. Check both, or use Forgot password.")});
+$("#rform").addEventListener("submit",async e=>{e.preventDefault();const U=getU(),r=$("#rroll").value.trim().toUpperCase(),p=$("#rpw").value;if(U[r])return bad("#rerr","An account with this roll number already exists. Use Sign in or Forgot password.");if(p.length<6)return bad("#rerr","Choose a password with at least 6 characters.");if(p!==$("#rpw2").value)return bad("#rerr","The two passwords don’t match.");U[r]={name:$("#rname").value.trim(),email:$("#rmail").value.trim().toLowerCase(),pw:await hash(p)};setU(U);e.target.reset();$("#lroll").value=r;$("#lpw").value="";showTab("in","Account created. Sign in to continue.")});
+$("#fform").addEventListener("submit",async e=>{e.preventDefault();const U=getU(),r=$("#froll").value.trim().toUpperCase(),u=U[r],p=$("#fpw").value;if(!u||u.email!==$("#fmail").value.trim().toLowerCase())return bad("#ferr","That roll number and email don’t match any account.");if(p.length<6)return bad("#ferr","Choose a password with at least 6 characters.");if(p!==$("#fpw2").value)return bad("#ferr","The two passwords don’t match.");u.pw=await hash(p);setU(U);e.target.reset();$("#lroll").value=r;$("#lpw").value="";showTab("in","Password changed. Sign in with your new password.")});
+$("#logout").addEventListener("click",leave);
+let saved=null;try{saved=sessionStorage.getItem("sca")}catch(e){}
+if(saved&&getU()[saved])enter(saved);else showTab(Object.keys(getU()).length?"in":"reg");
+</script>
+</body>
+</html>
